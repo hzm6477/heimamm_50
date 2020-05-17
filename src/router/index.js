@@ -10,8 +10,13 @@ Vue.use(VueRouter);
 const router = new VueRouter({
   routes: [
     {
+        // 路由重定向
+      path: "*",
+      redirect: "/Login",
+    },
+    {
       path: "/Login",
-      component: Login,
+      component:Login,
     },
     {
       path: "/Layout",
@@ -19,4 +24,5 @@ const router = new VueRouter({
     },
   ],
 });
+//暴漏出去
 export default router;
