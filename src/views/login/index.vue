@@ -39,22 +39,28 @@
           <el-button style="width:100%" @click="loginClick" type="primary">登录</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button style="width:100%" type="primary">注册</el-button>
+          <el-button style="width:100%" type="primary" @click="register">注册</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="right">
       <img src="@/assets/login_bg.png" alt />
     </div>
+    <!-- 导入子组件 -->
+    <register ref="reg"></register>
   </div>
 </template>
     
 
 <script>
 // 按需导入
-import { setToken } from '@/utils/token'
+import { setToken } from "@/utils/token";
+import register from './register.vue'
 export default {
   name: "Login",
+  components: {
+    register,
+  },
   data() {
     return {
       codeURL: process.env.VUE_APP_BASEURL + "/captcha?type=login",
@@ -63,7 +69,7 @@ export default {
         phone: "18511111111", // 手机号
         password: "12345678", // 密码
         code: "", // 验证码
-        isCheck: true, // 是否勾选了用户协议
+        isCheck: true // 是否勾选了用户协议
       },
       rules: {
         // 校验规则
@@ -85,8 +91,8 @@ export default {
 
               callback();
             },
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         password: [
           { required: true, message: "必须输入密码", trigger: "blur" },
@@ -94,8 +100,8 @@ export default {
             min: 6,
             max: 12,
             message: "长度在 6 到 12 个字符",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         code: [
           { required: true, message: "必须输入验证码", trigger: "blur" },
@@ -103,8 +109,8 @@ export default {
             min: 4,
             max: 4,
             message: "长度必须是4位",
-            trigger: "blur",
-          },
+            trigger: "blur"
+          }
         ],
         isCheck: [
           {
@@ -115,10 +121,10 @@ export default {
 
               callback();
             },
-            trigger: "change",
-          },
-        ],
-      },
+            trigger: "change"
+          }
+        ]
+      }
     };
   },
   async created() {
@@ -172,7 +178,7 @@ export default {
     },
     // 登录
     loginClick() {
-      this.$refs.loginFormRef.validate(async (valid) => {
+      this.$refs.loginFormRef.validate(async valid => {
         if (!valid) return;
 
         // 发请求给后台进行登录
@@ -199,14 +205,14 @@ export default {
           // 提示
           this.$message({
             message: "登录成功~",
-            type: "success",
+            type: "success"
           });
 
           // 保存token
-          setToken(res.data.data.token)
+          setToken(res.data.data.token);
 
           // 跳转到后台管理页面
-          this.$router.push('/layout')
+          this.$router.push("/layout");
         } else {
           this.$message.error(res.data.message);
 
@@ -217,7 +223,10 @@ export default {
         }
       });
     },
-  },
+    register(){
+        this.$refs.reg.dialogVisible=true
+    }
+  }
 };
 </script>
 
