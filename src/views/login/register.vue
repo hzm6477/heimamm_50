@@ -3,7 +3,7 @@
     <el-dialog :visible.sync="dialogVisible" width="600px" center>
       <div slot="title" class="title">注册</div>
       <!-- 表单 -->
-      <el-form label-width="100px" :model="resgisterForm" :rules="rules">
+      <el-form label-width="100px" :model="resgisterForm" :rules="rules" ref="resgisteRef">
         <el-form-item label="头像" prop="avatar">
           <el-upload
             class="avatar-uploader"
@@ -52,7 +52,7 @@
       </el-form>
       <span slot="footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -201,7 +201,24 @@ export default {
     handleAvatarSuccess(res,file) {
        console.log(res);
       this.imageUrl=process.env.VUE_APP_BASEURL+'/'+res.data.file_path
-      this.avatar=res.data.file_path
+      this.resgisterForm.avatar=res.data.file_path
+    }, 
+    // 注册
+    submit(){
+      //做最后的校验
+      this.$refs.resgisteRef.validate(async(video)=>{
+        if(!video)  return 
+        const res = await this.$axios.post('/register',this.resgisterForm)
+        if(res.data.code==200){
+           this.$message({
+          message: '注册成功',
+          type: 'success'
+        });
+            this.dialogVisible=false
+        }else{
+          this.$message.error(res.data.message);
+        }
+      })
     }
   }
 };
