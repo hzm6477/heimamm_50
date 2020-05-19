@@ -4,10 +4,11 @@
       <div slot="title" class="title">注册</div>
       <!-- 表单 -->
       <el-form label-width="100px" :model="resgisterForm" :rules="rules">
-        <el-form-item label="头像" prop="username">
+        <el-form-item label="头像" prop="avatar">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            :action="uploadAvatar"
+            name="image"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
@@ -34,11 +35,7 @@
               <el-input v-model="resgisterForm.code"></el-input>
             </el-col>
             <el-col :span="8">
-              <img
-                src="http://47.106.148.205/heimamm/public/captcha?type=sendsms&t=1589773089302"
-                alt
-                class="captcha"
-              />
+              <img @click="codClick" :src="codeUrl" alt class="captcha" />
             </el-col>
           </el-row>
         </el-form-item>
@@ -48,7 +45,7 @@
               <el-input v-model="resgisterForm.rcode"></el-input>
             </el-col>
             <el-col :span="6" style="margin-left:10px">
-              <el-button type="primary">获取用户验证码</el-button>
+              <el-button type="primary" @click="rcodeUrl">获取用户验证码</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -65,7 +62,12 @@
 export default {
   data() {
     return {
+      // 头像上传
+      imageUrl: "",
+      uploadAvatar: process.env.VUE_APP_BASEURL + "/uploads",
       dialogVisible: false,
+      //图形验证码
+      codeUrl: process.env.VUE_APP_BASEURL + "/captcha?type=sendsms",
       resgisterForm: {
         // 这里面的数据，将来是要提交给服务器
         username: "", // 用户名
@@ -80,6 +82,7 @@ export default {
         username: [
           { required: true, message: "必须输入用户名", trigger: "blur" }
         ],
+        avatar: [{ required: true, message: "头像不能为空", trigger: "blur" }],
 
         email: [
           {
@@ -144,6 +147,62 @@ export default {
         ]
       }
     };
+  },
+  //点击图像验证码刷新
+  methods: {
+    codClick() {
+      this.codeUrl =
+        process.env.VUE_APP_BASEURL +
+        "/captcha?type=sendsms&r=" +
+        Math.random() * 10;
+    },
+    async rcodeUrl() {
+      // this.$axios.post('/sendsms',{
+      //   code:this.resgisterForm.code,
+      //   phone:this.resgisterForm.phone,
+      // }).then(res=>{
+      //   // console.log(res);
+      //   if(res.data.code==200){
+      //     this.resgisterForm.rcode=res.data.data.captcha
+      //   }else{
+      //     this.$message.error(res.data.message);
+      //   }
+
+      // })
+      const res = await this.$axios.post("/sendsms", {
+        code: this.resgisterForm.code,
+        phone: this.resgisterForm.phone
+      });
+      if (res.data.code == 200) {
+        this.resgisterForm.rcode = res.data.data.captcha;
+      } else {
+        this.$message.error(res.data.message);
+        this.codClick();
+      }
+    },
+    //图片上传之前的回调函数
+    beforeAvatarUpload(file) {
+      // console.log(file);
+      const isJPG =
+        file.type === "image/jpeg" ||
+        file.type === "image/png" ||
+        file.type === "image/gif";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error("上传头像图片只能是 JPG 格式!");
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+      }
+      return isJPG && isLt2M;
+    },
+    //图片上传之后的回调函数
+    handleAvatarSuccess(res,file) {
+       console.log(res);
+      this.imageUrl=process.env.VUE_APP_BASEURL+'/'+res.data.file_path
+      this.avatar=res.data.file_path
+    }
   }
 };
 </script>
