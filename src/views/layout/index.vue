@@ -3,7 +3,7 @@
     <el-container class="layout">
       <el-header class="header">
         <div class="left">
-          <i  style="font-size: 20px;" class="el-icon-s-fold"></i>
+          <i @click="isCollapse = !isCollapse" style="font-size: 20px;" class="el-icon-s-fold"></i>
           <img src="@/assets/layout_icon.png" class="marginlr" alt />
           <span class="title">黑马面面</span>
         </div>
@@ -15,7 +15,7 @@
       </el-header>
       <el-container>
         <el-aside width="auto">
-          <el-menu router default-active="3" class="el-menu-vertical-demo" >
+          <el-menu router default-active="3" class="el-menu-vertical-demo" :collapse="isCollapse">
             <el-menu-item index="/layout/chart">
               <i class="el-icon-pie-chart"></i>
               <span slot="title">数据预览</span>
@@ -52,7 +52,8 @@ export default {
   data() {
     return {
       username: "",
-      avatar: ""
+      avatar: "",
+      isCollapse: false, // 是否收起折叠菜单
     };
   },
   created() {
