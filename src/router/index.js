@@ -2,6 +2,7 @@
 import Vue from "vue";
 import Login from "@/views/login";
 import Layout from "@/views/layout";
+import { getToken } from "@/utils/token.js"
 //导包
 import VueRouter from "vue-router";
 // 注册
@@ -24,5 +25,23 @@ const router = new VueRouter({
     },
   ],
 });
+//前置守卫
+router.beforeEach((to,from,next)=>{
+  console.log(to);
+  console.log(from);
+  if(to.fullPath=='/login'){
+    next()
+  }else{
+      const token = getToken()
+      if(token){ //代表登录了
+        next() //去想去的页面
+      }else{
+        next('/login') //如果没有带token返回原路
+      }
+  }
+  
+  
+  
+})
 //暴漏出去
 export default router;
