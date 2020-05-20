@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import { removeToken } from '@/utils/token'
 export default {
   data() {
     return {
@@ -70,7 +71,23 @@ export default {
       }
      
     },
-    logout() {}
+    logout() {
+         this.$confirm('你确定退出吗', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+           const res = await this.$axios.get("/logout");
+           if(res.data.code==200){
+            // 1、删除token
+            removeToken();
+
+            // 2、跳转到首页
+            this.$router.push("/login");
+           }
+           
+        })
+    }
   }
 };
 </script>
