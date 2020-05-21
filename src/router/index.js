@@ -1,7 +1,13 @@
 //配置路由
 import Vue from "vue";
+//导入页面
 import Login from "@/views/login";
 import Layout from "@/views/layout";
+import Chart from "@/views/layout/chart"
+import Enterprise from "@/views/layout/enterprise"
+import Question from "@/views/layout/question"
+import Subject from "@/views/layout/subject"
+import User from "@/views/layout/user"
 import { getToken } from "@/utils/token.js"
 //导包
 import VueRouter from "vue-router";
@@ -21,11 +27,17 @@ const router = new VueRouter({
     },
     {
       path: "/Layout",
-      component: Layout,
-    },
+      component: Layout,children: [
+        {path: 'chart',component: Chart},
+        {path: 'enterprise',component: Enterprise},
+        {path: 'question',component: Question},
+        {path: 'subject',component: Subject},
+        {path: 'user',component: User}
+      ] },
+    
   ],
 });
-//前置守卫
+//
 router.beforeEach((to,from,next)=>{
   console.log(to);
   console.log(from);
@@ -39,9 +51,8 @@ router.beforeEach((to,from,next)=>{
         next('/login') //如果没有带token返回原路
       }
   }
-  
-  
-  
 })
+
+
 //暴漏出去
 export default router;

@@ -72,6 +72,7 @@ export default {
       }
      
     },
+    //退出登录
     logout() {
          this.$confirm('你确定退出吗', '提示', {
           confirmButtonText: '确定',
