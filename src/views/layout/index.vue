@@ -15,7 +15,7 @@
       </el-header>
       <el-container>
         <el-aside width="auto">
-          <el-menu router default-active="3" class="el-menu-vertical-demo" :collapse="isCollapse">
+          <el-menu router :default-active="defaultActive" class="el-menu-vertical-demo" :collapse="isCollapse">
             <el-menu-item index="/layout/chart">
               <i class="el-icon-pie-chart"></i>
               <span slot="title">数据预览</span>
@@ -54,10 +54,15 @@ export default {
       username: "",
       avatar: "",
       isCollapse: false, // 是否收起折叠菜单
+      defaultActive:""
     };
   },
   created() {
-    this.getUserInfoData();
+   
+     this.defaultActive=this.$route.fullPath
+     this.getUserInfoData();
+    // console.log(this.$router);
+    
   },
   methods: {
       // 获取用户信息
