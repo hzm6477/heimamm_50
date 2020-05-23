@@ -42,7 +42,7 @@
         </el-table-column>
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <el-button type="primary">编辑</el-button>
+            <el-button type="primary" @click="editUser(scope.row)">编辑</el-button>
             <el-button
               :type="scope.row.status === 0 ? 'success' : 'info'"
               @click="changeStatus(scope.row.id)"
@@ -172,9 +172,41 @@ export default {
     },
     add() {
       // 让新增用户的对话框显示出来
-      this.$refs.userEditRef.dialogVisible = true;
-      this.$refs.userEditRef.mode = "add";
-    }
+      //  this.$refs.userEditRef.userForm = {
+      //   username: "", // 用户名
+      //   email: "", // 邮箱
+      //   phone: "", // 手机号
+      //   role_id: "", // 角色 1：超级管理员 2：管理员 3：老师 4：学生
+      //   status: "", // 状态 1：启用 0：禁用
+      //   remark: "", // 备注
+      // },
+        
+      this.$refs.userEditRef.dialogVisible = true
+      this.$nextTick(()=>{
+          // this.$refs.userEditRef.$refs.userEditFormRef.clearValidate()
+          //重置表单和情况表单
+          this.$refs.userEditRef.$refs.userEditFormRef.resetFields()
+        })
+      this.$refs.userEditRef.mode = "add"
+       
+    },
+     editUser(row){
+      //  console.log(res);
+       this.$refs.userEditRef.dialogVisible = true
+        this.$refs.userEditRef.mode = "edit"
+        //深拷贝：直接把对象赋值给变量
+       // this.$refs.userEditRef.userForm=row
+        //浅拷贝
+        // 第一种方法
+        this.$refs.userEditRef.userForm={...row}
+        //第二种方法
+        // this.$refs.userEditRef.userForm=JSON.parse(JSON.stringify(row))
+      this.$nextTick(()=>{
+          // this.$refs.userEditRef.$refs.userEditFormRef.clearValidate()
+          //重置表单和情况表单
+          this.$refs.userEditRef.$refs.userEditFormRef.clearValidate()
+        })
+     }
   }
 };
 </script>
