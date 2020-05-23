@@ -199,7 +199,7 @@ export default {
     },
     //图片上传之后的回调函数
     handleAvatarSuccess(res,file) {
-       console.log(res);
+      //  console.log(res);
       this.imageUrl=process.env.VUE_APP_BASEURL+'/'+res.data.file_path
       this.resgisterForm.avatar=res.data.file_path
     }, 
