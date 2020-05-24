@@ -1,20 +1,33 @@
 <template>
   <div>
     <el-card>
-      <el-form :model="searchForm" ref="searchFormRef" label-width="80px" inline>
+      <!-- 搜索部分 -->
+      <el-form
+        inline
+        :model="searchForm"
+        ref="searchFormRef"
+        label-width="80px"
+      >
         <el-form-item label="企业编号" prop="eid">
-          <el-input v-model="searchForm.eid"></el-input>
+          <el-input style="width:150px;" v-model="searchForm.eid"></el-input>
         </el-form-item>
         <el-form-item label="企业名称" prop="name">
-          <el-input v-model="searchForm.name"></el-input>
+          <el-input style="width:150px;" v-model="searchForm.name"></el-input>
         </el-form-item>
         <el-form-item label="创建者" prop="username">
-          <el-input v-model="searchForm.username"></el-input>
+          <el-input
+            style="width:150px;"
+            v-model="searchForm.username"
+          ></el-input>
         </el-form-item>
         <el-form-item label="创建者" prop="status">
-          <el-select v-model="searchForm.status" placeholder="请选择状态">
-            <el-option label="启用" :value="1"></el-option>
-            <el-option label="禁用" :value="0"></el-option>
+          <el-select
+            style="width:150px;"
+            v-model="searchForm.status"
+            placeholder="请选择状态"
+          >
+            <el-option label="启用" :value="1"> </el-option>
+            <el-option label="禁用" :value="0"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -24,28 +37,35 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <!-- 列表和分页部分 -->
-    <el-card style="margin-top: 10px;">
+    <el-card style="margin-top:15px;">
+      <!-- 列表和分页部分 -->
       <el-table :data="enterpriseList" border stripe>
-        <el-table-column type="index" label="序号" width="30px"></el-table-column>
-        <el-table-column prop="eid" label="企业编号"></el-table-column>
-        <el-table-column prop="name" label="企业名称"></el-table-column>
-        <el-table-column prop="username" label="创建者"></el-table-column>
-        <el-table-column prop="create_time" label="创建日期" width="100"></el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column type="index" label="序号" width="50">
+        </el-table-column>
+        <el-table-column prop="eid" label="企业编号"> </el-table-column>
+        <el-table-column prop="name" label="企业名称"> </el-table-column>
+        <el-table-column prop="username" label="创建者"> </el-table-column>
+        <el-table-column prop="create_time" label="创建日期" width="200">
+        </el-table-column>
+        <el-table-column label="状态">
           <template slot-scope="scope">
             <span
               :style="{ color: scope.row.status === 0 ? 'red' : '#87cd67' }"
-            >{{ scope.row.status === 0 ? "禁用" : "启用" }}</span>
+              >{{ scope.row.status === 0 ? "禁用" : "启用" }}</span
+            >
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280">
           <template slot-scope="scope">
-            <el-button type="primary">编辑</el-button>
+            <el-button @click="editEnterprise(scope.row)" type="primary"
+              >编辑</el-button
+            >
             <el-button
-              @click="ClickStatus(scope.row.id)"
+              @click="changeStatus(scope.row.id)"
               :type="scope.row.status === 0 ? 'success' : 'info'"
-            >{{scope.row.status === 0 ? '启用' : '禁用'}}</el-button>
+            >
+              {{ scope.row.status === 0 ? "启用" : "禁用" }}
+            </el-button>
             <el-button @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -60,25 +80,35 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
           background
-        ></el-pagination>
+        >
+        </el-pagination>
       </div>
     </el-card>
+    <enterprise-edit ref="enterpriseEditRef" @search="search"></enterprise-edit>
   </div>
 </template>
+
 <script>
+// 导入子组件
+import EnterpriseEdit from "./enterprise-add-or-update";
 export default {
+  name: "EnterPrise",
+  components: {
+    // 局部注册
+    EnterpriseEdit,
+  },
   data() {
     return {
       searchForm: {
-        eid: "", //企业编号
-        name: "", //企业名称
-        username: "", //创建者
-        status: "" //创建者状态
+        eid: "", // 企业编号
+        name: "", // 企业名称
+        username: "", // 创建者
+        status: "", // 状态
       },
       page: 1, // 页码
       limit: 2, // 页容量
       enterpriseList: [], // table展示所需要的数据
-      total: 0 // 总条数
+      total: 0, // 总条数
     };
   },
   created() {
@@ -90,11 +120,10 @@ export default {
         params: {
           page: this.page,
           limit: this.limit,
-          ...this.searchForm
-        }
+          ...this.searchForm,
+        },
       });
-      if (res.data.code == 200) {
-        //   console.log(res);
+      if (res.data.code === 200) {
         this.enterpriseList = res.data.data.items;
         this.total = res.data.data.pagination.total;
       }
@@ -102,67 +131,88 @@ export default {
     // 查询
     search() {
       this.page = 1;
-
       this.getEnterpriseListData();
     },
     // 清除
     clear() {
-      // console.log(111);
-      //清除的时候千万不能忘记prop  很重要哦
       this.$refs.searchFormRef.resetFields();
-
       this.search();
     },
     // 页容量发生改变
     sizeChange(val) {
       this.limit = val;
-
       this.search();
     },
     // 当前页码发生了改变
     currentChange(val) {
       this.page = val;
-
       this.getEnterpriseListData();
     },
-    //状态改变
-    async ClickStatus(id) {
-      // console.log(id);
+    async changeStatus(id) {
       const res = await this.$axios.post("/enterprise/status", { id });
-      if (res.data.code == 200) {
+      if (res.data.code === 200) {
+        // 提示
         this.$message({
-          message: "修改成功",
-          type: "success"
+          type: "success",
+          message: "更改状态成功~",
         });
-        this.search();
+        // 调用search方法刷新
+        this.getEnterpriseListData();
       }
     },
-    //删除
     del(id) {
-          this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async() => {
-          const res = await this.$axios.post('/enterprise/remove',{id})
-          if(res.data.code==200){
+      this.$confirm("确定删除该数据吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          const res = await this.$axios.post("/enterprise/remove", { id });
+          if (res.data.code === 200) {
+            // 提示
             this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          this.search()
+              type: "success",
+              message: "删除成功~",
+            });
+            // 调用search方法刷新
+            this.search();
           }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
-        }
+        })
+        .catch(() => {});
     },
-    add() {}
-  }
-
+    // 新增企业
+    add() {
+      this.$refs.enterpriseEditRef.mode = "add";
+      this.$refs.enterpriseEditRef.enterpriseForm = {
+        eid: "", // 企业编号
+        name: "", // 企业名称
+        short_name: "", // 简称
+        intro: "", // 企业简介
+        remark: "", // 备注
+      }
+      this.$refs.enterpriseEditRef.dialogVisible = true;
+      // this.$nextTick(() => {
+      //   // this.$refs.enterpriseEditRef.$refs.enterpriseFormRef.resetFields()
+      //   this.$refs.enterpriseEditRef.$refs.enterpriseFormRef.clearValidate()
+      // })
+    },
+    // 修改企业
+    editEnterprise(row) {
+      const { id, eid, intro, name, short_name, remark } = row;
+      this.$refs.enterpriseEditRef.enterpriseForm = {
+        id,
+        eid,
+        name,
+        short_name,
+        intro,
+        remark,
+      };
+      this.$refs.enterpriseEditRef.mode = "edit";
+      this.$refs.enterpriseEditRef.dialogVisible = true;
+      // this.$nextTick(() => {
+      //   this.$refs.enterpriseEditRef.$refs.enterpriseFormRef.clearValidate()
+      // })
+    },
+  },
+};
 </script>
-<style >
-</style>  

@@ -9,6 +9,8 @@ import Question from "@/views/layout/question"
 import Subject from "@/views/layout/subject"
 import User from "@/views/layout/user"
 import { getToken } from "@/utils/token.js"
+//测试
+import matable from '@/text/solot'
 //导包
 import VueRouter from "vue-router";
 // 注册
@@ -34,8 +36,14 @@ const router = new VueRouter({
         {path: 'subject',component: Subject},
         {path: 'user',component: User}
       ] },
-    
+
+     {
+       path:'/matable',
+       component:matable
+     }
   ],
+
+   
 });
 //
 router.beforeEach((to,from,next)=>{
