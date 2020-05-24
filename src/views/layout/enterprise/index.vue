@@ -43,9 +43,10 @@
           <template slot-scope="scope">
             <el-button type="primary">编辑</el-button>
             <el-button
+              @click="ClickStatus(scope.row.id)"
               :type="scope.row.status === 0 ? 'success' : 'info'"
             >{{scope.row.status === 0 ? '启用' : '禁用'}}</el-button>
-            <el-button>删除</el-button>
+            <el-button @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -106,8 +107,8 @@ export default {
     },
     // 清除
     clear() {
-        // console.log(111);
-       //清除的时候千万不能忘记prop  很重要哦   
+      // console.log(111);
+      //清除的时候千万不能忘记prop  很重要哦
       this.$refs.searchFormRef.resetFields();
 
       this.search();
@@ -124,9 +125,44 @@ export default {
 
       this.getEnterpriseListData();
     },
+    //状态改变
+    async ClickStatus(id) {
+      // console.log(id);
+      const res = await this.$axios.post("/enterprise/status", { id });
+      if (res.data.code == 200) {
+        this.$message({
+          message: "修改成功",
+          type: "success"
+        });
+        this.search();
+      }
+    },
+    //删除
+    del(id) {
+          this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          const res = await this.$axios.post('/enterprise/remove',{id})
+          if(res.data.code==200){
+            this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.search()
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+        }
+    },
     add() {}
   }
-};
+
 </script>
 <style >
 </style>  
