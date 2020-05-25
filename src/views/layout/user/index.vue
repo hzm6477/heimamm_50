@@ -172,20 +172,20 @@ export default {
     },
     add() {
       // 让新增用户的对话框显示出来
-      //  this.$refs.userEditRef.userForm = {
-      //   username: "", // 用户名
-      //   email: "", // 邮箱
-      //   phone: "", // 手机号
-      //   role_id: "", // 角色 1：超级管理员 2：管理员 3：老师 4：学生
-      //   status: "", // 状态 1：启用 0：禁用
-      //   remark: "", // 备注
-      // },
+       this.$refs.userEditRef.userForm={
+        username: "", // 用户名
+        email: "", // 邮箱
+        phone: "", // 手机号
+        role_id: "", // 角色 1：超级管理员 2：管理员 3：老师 4：学生
+        status: "", // 状态 1：启用 0：禁用
+        remark: "", // 备注
+      },
         
       this.$refs.userEditRef.dialogVisible = true
       this.$nextTick(()=>{
-          // this.$refs.userEditRef.$refs.userEditFormRef.clearValidate()
+          this.$refs.userEditRef.$refs.userEditFormRef.clearValidate()
           //重置表单和情况表单
-          this.$refs.userEditRef.$refs.userEditFormRef.resetFields()
+          // this.$refs.userEditRef.userEditFormRef.resetFields()
         })
       this.$refs.userEditRef.mode = "add"
        
